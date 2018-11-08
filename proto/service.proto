@@ -1,5 +1,5 @@
 syntax = "proto3";
-package test;
+package service;
 
 import "google/api/annotations.proto";
 
@@ -12,15 +12,23 @@ message Param {
 }
 
 service EchoService {
-  rpc Echo (Message) returns (Message) {
+  rpc Get (Param) returns (Param) {
+    option (google.api.http) = {
+      get: "/echo/{id}"
+    };
+  }
+  rpc Post (Message) returns (Message) {
     option (google.api.http) = {
       post: "/echo"
       body: "*"
     };
   }
+}
+
+service AuthService {
   rpc Get (Param) returns (Param) {
     option (google.api.http) = {
-      get: "/echo/{id}"
+      get: "/auth/{id}"
     };
   }
 }

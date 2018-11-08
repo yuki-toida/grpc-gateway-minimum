@@ -10,7 +10,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 
 	gw "github.com/yuki-toida/grpc-gateway-sample/proto"
 )
@@ -29,19 +28,23 @@ func main() {
 		panic(err)
 	}
 
+	if err := gw.RegisterAuthServiceHandlerFromEndpoint(ctx, mux, "localhost:9091", opts); err != nil {
+		panic(err)
+	}
+
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		glog.Fatal(err)
 	}
+
 }
 
 func matcher(headerName string) (string, bool) {
-	ok := headerName == "Cookie"
+	ok := headerName != "Ignore"
 	fmt.Printf("%v %s\n", ok, headerName)
 	return headerName, ok
 }
 
 func filter(ctx context.Context, w http.ResponseWriter, resp proto.Message) error {
-	fmt.Println(metadata.FromIncomingContext(ctx))
-	w.Header().Set("X-Test", "Test")
+	w.Header().Set("X-Filter", "FilterValue")
 	return nil
 }
