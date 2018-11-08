@@ -7,6 +7,7 @@ import (
 
 	pb "github.com/yuki-toida/grpc-gateway-sample/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 func main() {
@@ -14,7 +15,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	server := grpc.NewServer()
+
+	opts := []grpc.ServerOption{grpc.UnaryInterceptor(interceptor)}
+	server := grpc.NewServer(opts...)
+
 	pb.RegisterEchoServiceServer(server, &EchoServiceServer{})
 	server.Serve(listener)
 }
@@ -22,11 +26,19 @@ func main() {
 type EchoServiceServer struct{}
 
 func (s *EchoServiceServer) Echo(c context.Context, m *pb.Message) (*pb.Message, error) {
-	fmt.Println(m)
+	// fmt.Println(m)
 	return m, nil
 }
 
 func (s *EchoServiceServer) Get(c context.Context, p *pb.Param) (*pb.Param, error) {
-	fmt.Println(p)
+	// fmt.Println(p)
 	return p, nil
+}
+
+func interceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	fmt.Println(info.FullMethod)
+	fmt.Println(info.Server)
+	fmt.Println(req)
+	fmt.Println(metadata.FromIncomingContext(ctx))
+	return handler(ctx, req)
 }
