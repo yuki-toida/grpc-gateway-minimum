@@ -15,14 +15,39 @@
     "application/json"
   ],
   "paths": {
-    "/echo": {
-      "post": {
-        "operationId": "Echo",
+    "/auth/{id}": {
+      "get": {
+        "operationId": "Get",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/testMessage"
+              "$ref": "#/definitions/serviceParam"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "AuthService"
+        ]
+      }
+    },
+    "/echo": {
+      "post": {
+        "operationId": "Post",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceMessage"
             }
           }
         },
@@ -32,8 +57,33 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/testMessage"
+              "$ref": "#/definitions/serviceMessage"
             }
+          }
+        ],
+        "tags": [
+          "EchoService"
+        ]
+      }
+    },
+    "/echo/{id}": {
+      "get": {
+        "operationId": "Get",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/serviceParam"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "tags": [
@@ -43,11 +93,20 @@
     }
   },
   "definitions": {
-    "testMessage": {
+    "serviceMessage": {
       "type": "object",
       "properties": {
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "serviceParam": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     }
